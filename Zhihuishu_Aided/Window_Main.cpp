@@ -4,46 +4,50 @@ Window_Main::Window_Main(QPoint Start1_isd, QPoint End1_isd, QPoint Start2_isd, 
 {
 	T2 = new Thread_Timer();
 	ui.setupUi(this);
-	setWindowFlags(windowFlags()&~Qt::WindowMaximizeButtonHint);//½ûÖ¹×î´ó»¯
-	setFixedSize(this->width(), this->height());//½ûÖ¹¸Ä±ä´°¿Ú´óĞ¡
-	setWindowIcon(QIcon(":/Zhihuishu_Aided/main_ico.ico"));//±êÌâÀ¸Í¼±ê
-	setWindowTitle(QStringLiteral("ÖÇ»ÛÊ÷¸¨Öú"));//±êÌâÀ¸ÎÄ×Ö
-	Start1 = Start1_isd, End1 = End1_isd, Start2 = Start2_isd, End2 = End2_isd, Start3 = Start3_isd, End3 = End3_isd;//¸÷×ø±êµã¸üÃû¼ÓÈë±¾ÀàµÄ³ÉÔ±
-	//¼ÆËãStart End 1 2¸÷µã´°¿ÚÄÚÏà¶Ô×ø±ê
+	setWindowFlags(windowFlags()&~Qt::WindowMaximizeButtonHint);//ç¦æ­¢æœ€å¤§åŒ–
+	setFixedSize(this->width(), this->height());//ç¦æ­¢æ”¹å˜çª—å£å¤§å°
+	setWindowIcon(QIcon(":/Zhihuishu_Aided/main_ico.ico"));//æ ‡é¢˜æ å›¾æ ‡
+	setWindowTitle(QStringLiteral("æ™ºæ…§æ ‘è¾…åŠ©"));//æ ‡é¢˜æ æ–‡å­—
+	Start1 = Start1_isd, End1 = End1_isd, Start2 = Start2_isd, End2 = End2_isd, Start3 = Start3_isd, End3 = End3_isd;//å„åæ ‡ç‚¹æ›´ååŠ å…¥æœ¬ç±»çš„æˆå‘˜
+	//è®¡ç®—Start End 1 2å„ç‚¹çª—å£å†…ç›¸å¯¹åæ ‡
 	Start1 -= Start3, End1 = Start1 + (End1_isd - Start1_isd);
 	Start2 -= Start3, End2 = Start2 + (End2_isd - Start2_isd);
 	//==================================
 
-	//×¼±¸SendMessage
-	GoalWindowName_Str = "¿Î³ÌÑ§Ï°_ÖÇ»ÛÊ÷ - Google Chrome";
+	//å‡†å¤‡SendMessage
+	GoalWindowName_Str = "è¯¾ç¨‹å­¦ä¹ _æ™ºæ…§æ ‘ - Google Chrome";
 	WCHAR LPCWSTR[256];
 	memset(LPCWSTR, 0, sizeof(LPCWSTR));
 	MultiByteToWideChar(CP_ACP, 0, GoalWindowName_Str, strlen(GoalWindowName_Str) + 1, LPCWSTR, sizeof(LPCWSTR) / sizeof(LPCWSTR[0]));
 	GoalWindow_HD = FindWindow(NULL, LPCWSTR);
+	if (GoalWindow_HD == 0)
+	{
+		QMessageBox::information(NULL, QStringLiteral("æç¤º"), QStringLiteral("æœªæ£€æµ‹åˆ°ç›®æ ‡æµè§ˆå™¨çª—å£"), QMessageBox::Yes, QMessageBox::Yes);
+	}
 
-	//¸øÒÆ¶¯¹â±êÏß³Ì¼ÆËãÓë´«Èë×ø±êºÍ
+	//ç»™ç§»åŠ¨å…‰æ ‡çº¿ç¨‹è®¡ç®—ä¸ä¼ å…¥åæ ‡å’Œ
 	MiddlePoint.setX((Start1.x() + End1.x()) / 2), MiddlePoint.setY((Start1.y() + End1.y()) / 2);
 	T1.MiddlePoint = this->MiddlePoint;
 	T1.GoalWindow_HD = GoalWindow_HD;
 
-	T3.Start1 = Start1, T3.End1 = End1, T3.Start2 = Start2, T3.End2 = End2;//¸øÆÁÄ»¼ì²âÏß³Ì´«Èë×ø±êºÍ
+	T3.Start1 = Start1, T3.End1 = End1, T3.Start2 = Start2, T3.End2 = End2;//ç»™å±å¹•æ£€æµ‹çº¿ç¨‹ä¼ å…¥åæ ‡å’Œ
 	T3.GoalWindow_HD = GoalWindow_HD;
 
-	handle = (HWND)(winId());// »ñÈ¡µ±Ç°´°¿Ú¾ä±ú 
+	handle = (HWND)(winId());// è·å–å½“å‰çª—å£å¥æŸ„ 
 	strcpy(name_str, "Zhihuishu_Aided_STOP");
 	MultiByteToWideChar(CP_ACP, 0, name_str, -1, name_tchar, 100);
-	HotKeyId = GlobalAddAtom(name_tchar);//µÃµ½ÈÈ¼üµÄÎ¨Ò»±êÊ¶
-	RegisterHotKey(handle, HotKeyId, 0, VK_F8);//×¢²áÈ«¾ÖÈÈ¼üF8
-	qApp->installNativeEventFilter(this);//Óëµ±Ç°´°¿Ú¹ØÁª
+	HotKeyId = GlobalAddAtom(name_tchar);//å¾—åˆ°çƒ­é”®çš„å”¯ä¸€æ ‡è¯†
+	RegisterHotKey(handle, HotKeyId, 0, VK_F8);//æ³¨å†Œå…¨å±€çƒ­é”®F8
+	qApp->installNativeEventFilter(this);//ä¸å½“å‰çª—å£å…³è”
 
-	//³õÊ¼Ïß³ÌÔËĞĞ±êÊ¶ÖÃÁã
+	//åˆå§‹çº¿ç¨‹è¿è¡Œæ ‡è¯†ç½®é›¶
 	T1.flag_Thread_MoveArrow = 0;
 	T2->flag_Thread_Timer = 0;
 	T3.flag_Thread_ScreenAnalyze = 0;
 
-	connect(ui.pushButton_1, SIGNAL(clicked()), this, SLOT(Start(void)));//¹ØÁª¿ªÊ¼°´Å¥
-	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(close(void)));//¹ØÁªÍË³ö°´Å¥
-	connect(T2, SIGNAL(Touch(void)), this, SLOT(Judge(void)));//WTF???ÄãÂè°¡£¡ÎªÊ²Ã´Á¬²»ÉÏ°¡£¡¸üĞÂ£º=_=Ô­À´ÊÇ²Ûº¯ÊıÉùÃ÷Ã»·Åµ½ÕıÈ·Î»ÖÃ¡£¡£¡£
+	connect(ui.pushButton_1, SIGNAL(clicked()), this, SLOT(Start(void)));//å…³è”å¼€å§‹æŒ‰é’®
+	connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(close(void)));//å…³è”é€€å‡ºæŒ‰é’®
+	connect(T2, SIGNAL(Touch(void)), this, SLOT(Judge(void)));//WTF???ä½ å¦ˆå•Šï¼ä¸ºä»€ä¹ˆè¿ä¸ä¸Šå•Šï¼æ›´æ–°ï¼š=_=åŸæ¥æ˜¯æ§½å‡½æ•°å£°æ˜æ²¡æ”¾åˆ°æ­£ç¡®ä½ç½®ã€‚ã€‚ã€‚
 }
 
 Window_Main::~Window_Main()
@@ -65,7 +69,7 @@ void Window_Main::ToClick(int mode)
 	}
 	switch (mode)
 	{
-		//ÊÓÆµ½áÊø×Ô¶¯ÏÂÒ»½Ú
+		//è§†é¢‘ç»“æŸè‡ªåŠ¨ä¸‹ä¸€èŠ‚
 	case 1:
 	{
 		//SetCursorPos(Start1.x() + 165, End1.y() + 30);
@@ -75,7 +79,7 @@ void Window_Main::ToClick(int mode)
 		SendMessage(GoalWindow_HD, WM_LBUTTONDOWN, 0, (((End1.y() + 30) << 16) + (Start1.x() + 165)));
 		SendMessage(GoalWindow_HD, WM_LBUTTONUP, 0, (((End1.y() + 30) << 16) + (Start1.x() + 165)));
 	}break;
-	//µ¯Ìâ×Ô¶¯¹Ø±Õ
+	//å¼¹é¢˜è‡ªåŠ¨å…³é—­
 	case 2:
 	{
 		//SetCursorPos(Start2.x() + 750, Start2.y() + 20);
@@ -95,8 +99,8 @@ void Window_Main::ToClick(int mode)
 
 void Window_Main::Start(void)
 {
-	T3.IfVideoEnd = 0;//ÊÓÆµ½áÊø±êÊ¶ÖÃÁã
-	T3.IfQuestionShow = 0;//µ¯Ìâ±êÊ¶ÖÃÁã
+	T3.IfVideoEnd = 0;//è§†é¢‘ç»“æŸæ ‡è¯†ç½®é›¶
+	T3.IfQuestionShow = 0;//å¼¹é¢˜æ ‡è¯†ç½®é›¶
 	hide();
 	MoveArrow();
 	TimeBegin();
@@ -117,10 +121,10 @@ void Window_Main::Judge(void)
 	}
 }
 
-//×ÓÏß³Ì²¿·Ö
+//å­çº¿ç¨‹éƒ¨åˆ†
 void Window_Main::ScreenAnalyze(void)
 {
-	T3.flag_Thread_ScreenAnalyze = 1;//ÔËĞĞ±êÊ¶ÖÃÎª1
+	T3.flag_Thread_ScreenAnalyze = 1;//è¿è¡Œæ ‡è¯†ç½®ä¸º1
 	T3.start();
 }
 
@@ -149,14 +153,14 @@ void Thread_ScreenAnalyze::run(void)
 {
 	while (flag_Thread_ScreenAnalyze)
 	{
-		//½ØÍ¼
-		QScreen *VideoArea_Screen = QGuiApplication::primaryScreen();//²¥·Å°´Å¥ÇøÓò½ØÍ¼
+		//æˆªå›¾
+		QScreen *VideoArea_Screen = QGuiApplication::primaryScreen();//æ’­æ”¾æŒ‰é’®åŒºåŸŸæˆªå›¾
 		VideoArea_Pix = VideoArea_Screen->grabWindow((WId)GoalWindow_HD, Start1.x() + 20, End1.y() - 235, 100, 100);
-		QScreen *QuestionArea_Screen = QGuiApplication::primaryScreen();//µ¯ÌâÇøÓò½ØÍ¼
+		QScreen *QuestionArea_Screen = QGuiApplication::primaryScreen();//å¼¹é¢˜åŒºåŸŸæˆªå›¾
 		QuestionArea_Pix = QuestionArea_Screen->grabWindow((WId)GoalWindow_HD, Start2.x(), Start2.y(), 770, 450);
 		VideoArea_Img = VideoArea_Pix.toImage(), QuestionArea_Img = QuestionArea_Pix.toImage();
 
-		//µ¯ÌâÇøÓò½ØÍ¼ÅĞ¶ÏRGB¾ù>=200µÄÏñËØµãÕ¼×ÜÇøÓòµÄ°Ù·Ö±È>=0.9
+		//å¼¹é¢˜åŒºåŸŸæˆªå›¾åˆ¤æ–­RGBå‡>=200çš„åƒç´ ç‚¹å æ€»åŒºåŸŸçš„ç™¾åˆ†æ¯”>=0.9
 		int PixelSub = 0;
 		uchar* imagebits = QuestionArea_Img.bits();
 		int RightPixel = 0;
@@ -181,9 +185,9 @@ void Thread_ScreenAnalyze::run(void)
 			IfQuestionShow = 1;
 		}
 
-		if (!IfQuestionShow)//Èç¹ûµ¯ÌâÁË£¬ºöÂÔ¼ì²âµ½µÄÊÓÆµ½áÊø±êÊ¶
+		if (!IfQuestionShow)//å¦‚æœå¼¹é¢˜äº†ï¼Œå¿½ç•¥æ£€æµ‹åˆ°çš„è§†é¢‘ç»“æŸæ ‡è¯†
 		{
-			//²¥·Å°´Å¥ÇøÓò½ØÍ¼ÅĞ¶ÏÓëÔ¤ÖÃÍ¼Æ¬µÄÏàËÆ¶È
+			//æ’­æ”¾æŒ‰é’®åŒºåŸŸæˆªå›¾åˆ¤æ–­ä¸é¢„ç½®å›¾ç‰‡çš„ç›¸ä¼¼åº¦
 
 			//VideoEndFlag
 			//VideoEndFlag = QImage(":/Zhihuishu_Aided/VideoEndFlag-100_100.png");
@@ -282,19 +286,19 @@ void Thread_MoveArrow::run(void)
 	}
 }
 
-void Window_Main::keyPressEvent(QKeyEvent *event)//ÄÚ²¿°´¼ü¼ì²â-ÒÑÖÃ¿Õ
+void Window_Main::keyPressEvent(QKeyEvent *event)//å†…éƒ¨æŒ‰é”®æ£€æµ‹-å·²ç½®ç©º
 {
 
 }
 
-bool Window_Main::nativeEventFilter(const QByteArray &eventType, void *message, long *result)//ÖØĞ´ÏûÏ¢´¦Àíº¯Êı-WIN_HOTKEY
+bool Window_Main::nativeEventFilter(const QByteArray &eventType, void *message, long *result)//é‡å†™æ¶ˆæ¯å¤„ç†å‡½æ•°-WIN_HOTKEY
 {
 	if (eventType == "windows_generic_MSG")
 	{
 		MSG *msg = (MSG*)message;
 		if (msg->message == WM_HOTKEY)
 		{
-			//¸÷Ïß³ÌÔËĞĞ±êÊ¶ÖÃÁã
+			//å„çº¿ç¨‹è¿è¡Œæ ‡è¯†ç½®é›¶
 			T1.flag_Thread_MoveArrow = 0;
 			T2->flag_Thread_Timer = 0;
 			T3.flag_Thread_ScreenAnalyze = 0;
