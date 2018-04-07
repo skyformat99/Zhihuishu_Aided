@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/Zhihuishu_Aided">
+        <file>main_ico.png</file>
+        <file>main_ico.ico</file>
+        <file>example.png</file>
+        <file>example2.png</file>
+        <file>example3.png</file>
+        <file>VideoEndFlag-100_100.png</file>
+    </qresource>
+</RCC>
